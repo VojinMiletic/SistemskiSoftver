@@ -1,33 +1,30 @@
 #include <stdio.h>
-#include "../inc/helper.hpp"
 #include "../misc/lexer.hpp"
 #include "../inc/Asembler.hpp"
 #include <fstream>
 
-int main(){
+int main(int argc, char* argv[]){
 
-  elementi_help = new vector<Leksicki_Element*>();
-  argumenti_help = nullptr;
-  fajl = fopen("./asm.s" ,"r");
-  if(!fajl) printf("Greska Input");
-  yyin = fajl;
-  yyparse();
+  const char* ulazIme;
+  const char* izlazIme;
 
-  FILE* izlaz = fopen("izlaz.txt", "w");
-  if(!izlaz) printf("Greska Output");
-
-  
-  for(int i = 0; i < elementi_help->size(); i++){
-    elementi_help->at(i)->ispisi(izlaz);
+  if(argc < 4){
+    cout << "Neispravni argumenti\n";
+    exit(-1);
   }
+  string opcija = argv[1];
+  if(opcija != "-o"){
+    cout << "Neispravna opcija: " << opcija << endl;
+    exit(-1);
+  }
+  izlazIme = argv[2];
+  ulazIme = argv[3];
   
 
-  
-  
-  Asembler::getInstance()->prolaz();
-  //Asembler::getInstance()->ispisiTabeluSimbola();
-  //Asembler::getInstance()->ispisiTabeluSekcija();
-  //Asembler::getInstance()->ispisiKodSekcija();
+  Asembler *asembler = Asembler::getInstance();
+  asembler->init(ulazIme, izlazIme);
+  asembler->prolaz();
+
 
   return 0;
 }

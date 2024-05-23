@@ -3,7 +3,6 @@
 
 vector<Leksicki_Element*>* elementi_help = nullptr;
 struct argument* argumenti_help;
-FILE* fajl = nullptr;
 
 struct argument* napraviArgument(int br, char* sym){
   struct argument* arg = (argument*) malloc(sizeof(struct argument));
