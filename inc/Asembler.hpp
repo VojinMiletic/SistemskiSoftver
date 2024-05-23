@@ -1,5 +1,7 @@
 #ifndef ASEMBLER_HPP
 #define ASEMBLER_HPP
+#include "../inc/helper.hpp"
+#include "../misc/lexer.hpp"
 #include "../inc/Operand.hpp"
 #include "../inc/LeksickiElement.hpp"
 #include "../inc/Direktiva.hpp"
@@ -73,6 +75,9 @@ class Asembler{
     Operand* operand;
     int redBrSimbolaUBazenu; 
     string imeSimbola;
+    int gpr1;
+    int gpr2;
+    int csr;
   };
 
   struct UlazUTabeluSekcija{
@@ -139,9 +144,17 @@ class Asembler{
 
   void napraviRelokacioniZapis(UlazUTabeluObracanjaUnapred);
   int napisiInstrukciju(kodOperacije opKod, int a, int b, int c, int d);
-  void izvediSkok(yytokentype opKod, Operand* operand, int gpr1, int gpr2);
+  void napraviZakrpu(yytokentype opKod, Operand* operand, int gpr1, int gpr2, int csr);
+  bool proveriNedefinisaneSimbole();
+  void izbaciNepotrebneSimboleIzBazena();
+  void popuniBazeneLiterala();
+  void napraviBinarniFajl();
+
+  vector<string>* nedefinisaniSimboli;
 
   ofstream fajl;
+  const char* imeIzlaznogFajla;
+  const char* imeUlaznogFajla;
   
 
 public:
@@ -150,6 +163,14 @@ public:
       instanca = new Asembler();
     }
     return instanca;
+  }
+
+  void init(const char* inFajl, const char* outFajl){
+    this->imeUlaznogFajla = inFajl;
+    this->imeIzlaznogFajla = outFajl;
+    string ime = outFajl;
+    ime = ime.substr(0, ime.size()-2) + "Dump.txt";
+    fajl.open(ime); // txt fajl kako bi korisnik imao izlaz asemblera u citljivom obliku
   }
 
   bool prolaz();

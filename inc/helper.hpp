@@ -13,7 +13,7 @@ struct argument{
 
 extern vector<Leksicki_Element*>* elementi_help;
 extern struct argument* argumenti_help;
-extern FILE* fajl;
+//extern FILE* ulazniFajl;
 
 struct argument* napraviArgument(int, char*);
 
