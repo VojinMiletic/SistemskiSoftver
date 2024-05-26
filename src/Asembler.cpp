@@ -447,10 +447,11 @@ bool Asembler::obradiEnd(int brLinije){
 
   napraviBinarniFajl();
 
-  ispisiTabeluSimbola();
   ispisiTabeluSekcija();
-  ispisiKodSekcija();
+  ispisiTabeluSimbola();
   ispisiRelokacioneZapise();
+  ispisiKodSekcija();
+  
   fajl.close(); // Zatvaramo txt dump fajl koji smo pravili 
   std::cout << "Program zavrsen.\n";
   exit(0);
@@ -705,7 +706,7 @@ void Asembler::ispisiTabeluSimbola(){
     fajl << setw(8) << iter.second.vrednost << '\t';
     fajl << setw(6) << (iter.second.sekcija == iter.second.imeSimbola ? "SCTN" : "NOTYPE") << '\t';
     fajl << setw(10) << iter.second.sekcija << '\t';
-    fajl << setw(9) <<  tabelaSimbola[iter.second.sekcija].idSimbola << '\t';
+    fajl << setw(9) <<  tabelaSekcija[iter.second.sekcija].idSekcije << '\t';
     fajl << setw(9) << ((iter.second.isGlobal == true || iter.second.isExtern == true) ? "GLOB" : "LOC" )<< '\t';
     fajl << setw(9) << (iter.second.definisan == true ? "DA" : "NE") << endl;
   }
@@ -988,9 +989,32 @@ void Asembler::popuniBazeneLiterala(){
 void Asembler::napraviBinarniFajl(){
   ofstream binarniFajl(imeIzlaznogFajla, ios::out | ios::binary);
 
+  // Ispisemo tabelu sekcija
+
+  int brUlaza = tabelaSekcija.size();
+  binarniFajl.write((char*)(&brUlaza), sizeof(int));
+  for(map<string,UlazUTabeluSekcija>::iterator i = tabelaSekcija.begin(); i != tabelaSekcija.end(); i++){
+
+    // Prvo kljuc
+    string ime = i->first;
+    int duzina = ime.length();
+    binarniFajl.write((char*)&duzina, sizeof(int));
+    binarniFajl.write(ime.c_str(), duzina);
+
+    // Ostale vrednosti
+    binarniFajl.write((char*)(&i->second.idSekcije), sizeof(i->second.idSekcije));
+    binarniFajl.write((char*)(&i->second.velicina), sizeof(i->second.velicina));
+
+    duzina = i->second.imeSekcije.length();
+    binarniFajl.write((char*)(&duzina), sizeof(int));
+    binarniFajl.write(i->second.imeSekcije.c_str(), duzina);
+    
+  }
+
+
   // Ispisemo tabelu simbola
 
-  int brUlaza = tabelaSimbola.size();
+  brUlaza = tabelaSimbola.size();
   binarniFajl.write((char*)&brUlaza, sizeof(int));
   for(map<string, UlazUTabeluSimbola>::iterator i = tabelaSimbola.begin(); i != tabelaSimbola.end(); i++){
     // Prvo idemo kljuc
@@ -1013,27 +1037,7 @@ void Asembler::napraviBinarniFajl(){
     binarniFajl.write((char*)(&tabelaSekcija[i->second.sekcija].idSekcije), sizeof(int));
   }
 
-  // Ispisemo tabelu sekcija
-
-  brUlaza = tabelaSekcija.size();
-  binarniFajl.write((char*)(&brUlaza), sizeof(int));
-  for(map<string,UlazUTabeluSekcija>::iterator i = tabelaSekcija.begin(); i != tabelaSekcija.end(); i++){
-
-    // Prvo kljuc
-    string ime = i->first;
-    int duzina = ime.length();
-    binarniFajl.write((char*)&duzina, sizeof(int));
-    binarniFajl.write(ime.c_str(), duzina);
-
-    // Ostale vrednosti
-    binarniFajl.write((char*)(&i->second.idSekcije), sizeof(i->second.idSekcije));
-    binarniFajl.write((char*)(&i->second.velicina), sizeof(i->second.velicina));
-
-    duzina = i->second.imeSekcije.length();
-    binarniFajl.write((char*)(&duzina), sizeof(int));
-    binarniFajl.write(i->second.imeSekcije.c_str(), duzina);
-    
-  }
+  
   // Ispisujemo relokacione tabele
   brUlaza = tabelaRelokacija.size();
   binarniFajl.write((char*)&brUlaza, sizeof(int));
