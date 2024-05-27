@@ -9,6 +9,8 @@ using namespace std;
 #include <iomanip>
 #include <sys/mman.h>
 #include <string.h>
+#include <termios.h>
+#include <unistd.h>
 
 
 class Emulator{
@@ -75,6 +77,7 @@ class Emulator{
   long &rsp = gp_registri[14];
 
   bool jelRadi;
+  bool prekidTerminala;
 
   static Emulator* instanca;
   Emulator();
@@ -102,6 +105,9 @@ class Emulator{
   int pop();
 
   void napraviPrekid(unsigned long uzrok);
+  void napraviTerminal();
+  void restartujTerminal();
+  void citajSaStandardnogUlaza();
 
   void ispisiRegistre();
 
@@ -113,6 +119,8 @@ public:
   static unsigned long PREKID_TAJMER;
   static unsigned long PREKID_TERMINAL;
   static unsigned long SOFTVERSKI_PREKID;
+  static unsigned long TERM_IN;
+  static unsigned long TERM_OUT;
 
 
   static Emulator* getInstance(){
