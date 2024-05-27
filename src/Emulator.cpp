@@ -9,8 +9,10 @@ unsigned long Emulator::INSTRUKCIJSKA_GRESKA = 0x1;
 unsigned long Emulator::PREKID_TAJMER = 0x2;
 unsigned long Emulator::PREKID_TERMINAL = 0x3;
 unsigned long Emulator::SOFTVERSKI_PREKID = 0x4;
+unsigned long Emulator::TERM_IN = 0x0FFFFFF04;
+unsigned long Emulator::TERM_OUT = 0x0FFFFFF00;
 
-Emulator::Emulator() : jelRadi(false), gp_registri(16, 0), cs_registri(3,0) {}
+Emulator::Emulator() : jelRadi(false), prekidTerminala(false), gp_registri(16, 0), cs_registri(3,0) {}
 
 void Emulator::procitajUlaz(){
 
@@ -286,18 +288,31 @@ void Emulator::emuliraj(){
   rsp = ADRESA_MEMORIJSKIH_MAPIRANIH_REGISTARA;
 
   // Dozvolimo sve prekide
-  cs_registri[status] &= ~0x4; // Maskiramo softverske prekide
-  cs_registri[status] &= ~0x2; // Maskiramo prekide od terminala
-  cs_registri[status] &= ~0x1; // Maskiramo prekide od tajmera
+  cs_registri[status] &= ~0x4; // Dozvolimo softverske prekide
+  cs_registri[status] &= ~0x2; // Dozvolimo prekide od terminala
+  cs_registri[status] &= ~0x1; // Dozvolimo prekide od tajmera
+
+  napraviTerminal();
 
   jelRadi = true;
 
   while(jelRadi == true){
     prepoznavanje_i_izvrsavanje_instrukcije();
+
+    citajSaStandardnogUlaza();
+    if(prekidTerminala == true){
+      napraviPrekid(PREKID_TERMINAL);
+      prekidTerminala = false;
+    }
+    
   }
+
+  restartujTerminal();
 
   ispisiRegistre();
   ispisiMapiranuMemoriju();
+  // Da oslobodimo mapiranu memoriju.
+  munmap(memorija, VELICINA_MEMORIJE);
 }
 
 
@@ -313,12 +328,18 @@ unsigned int Emulator::procitajInt(unsigned int adresa){
 
 void Emulator::upisiBajt(unsigned int adresa, char podatak){
   // Ovde treba dodati nesto za terminal
+  if(adresa == TERM_OUT){
+    cout << podatak;
+  }
   char* bajt = static_cast<char*>((static_cast<char*>(memorija) + adresa));
   *bajt = podatak;
 }
 
 void Emulator::upisiInt(unsigned int adresa, int podatak){
   // Ovde treba dodati nesto za terminal
+  if(adresa == TERM_OUT){
+    cout << (char)podatak << flush;
+  }
   int *mesto = reinterpret_cast<int*>(static_cast<char*>(memorija) + adresa);
   *mesto = podatak;
 }
@@ -349,13 +370,43 @@ void Emulator::napraviPrekid(unsigned long uzrok){
 }
 
 void Emulator::ispisiRegistre(){
-  cout << "-----------------------------------------------------------------------" << endl;
+  cout << endl;
+  cout << "----------------------------------------------------------------------" << endl;
   cout << "Emulated processor executed halt instruction.\n";
   cout << "Emulated processor state:\n";
   for(int i = 0; i < 16; i++){
-    cout << "\tr" << dec << i << ":0x" << hex << setfill('0') << setw(8) << gp_registri[i];
+    string reg = "r" + to_string(i);
+    cout << "\t" << setw(3) << setfill(' ') << reg << "=0x" << setw(8) << hex << setfill('0') << gp_registri[i];
     
     if(i % 4 == 3) cout <<  endl;
   }
   cout << endl;
+}
+
+struct termios staroPodesavanje; // Ovde pamtimo staro podesavanje terminala
+struct termios novoPodesavanje;  // Ovde cemo konfigurisati novo podesavanje terminala
+
+void Emulator::napraviTerminal(){
+  tcgetattr(STDIN_FILENO, &staroPodesavanje);
+  
+  novoPodesavanje = staroPodesavanje;
+
+  novoPodesavanje.c_lflag &= ~(ECHO | ECHONL | ICANON | IEXTEN);
+  novoPodesavanje.c_cc[VTIME] = 0;
+  novoPodesavanje.c_cc[VMIN] = 0;
+
+  tcsetattr(STDIN_FILENO, TCSAFLUSH, &novoPodesavanje);
+
+}
+
+void Emulator::restartujTerminal(){
+  tcsetattr(STDIN_FILENO, TCSAFLUSH, &staroPodesavanje);
+}
+
+void Emulator::citajSaStandardnogUlaza(){
+  char karakter;
+  if(read(STDIN_FILENO, &karakter, 1) == 1){
+    upisiBajt(TERM_IN, karakter);
+    prekidTerminala = true;
+  }
 }
