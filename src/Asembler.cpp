@@ -346,7 +346,7 @@ bool Asembler::obradiEnd(int brLinije){
       }
       else if(ulaz.instrukcija == TOKEN_ST){
         int d = tabelaSekcija[ulaz.trenutnaSekcija].velicina + 4 * redBr - ulaz.trenutniLC - 4;
-        int kodInstrukcije = napisiInstrukciju(ST_MEM, 15, 0, ulaz.gpr1, d);
+        int kodInstrukcije = napisiInstrukciju(ST_MEM_MEM, 15, 0, ulaz.gpr1, d);
         kodSekcije[ulaz.trenutnaSekcija].seekp(ulaz.trenutniLC);
         kodSekcije[ulaz.trenutnaSekcija].write((char*)&kodInstrukcije, sizeof(int));
         kodSekcije[ulaz.trenutnaSekcija].seekp(0, std::ios_base::end);
