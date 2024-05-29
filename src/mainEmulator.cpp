@@ -5,7 +5,7 @@ using namespace std;
 int main(int argc, const char* argv[]){
 
   if(argc < 2){
-    cout << "Nedovoljno argumenata!\n";
+    cout << "EMULATOR GRESKA: Nedovoljno argumenata!\n";
     exit(-1);
   }
 

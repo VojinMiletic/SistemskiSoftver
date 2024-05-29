@@ -14,14 +14,13 @@ void Linker::dohvatiPodatke(){ // tabela sekcija, tabela simbola, relokacioni za
       cout << "GRESKA: fajl: " << fajl << " ne postoji\n";
       exit(-1);
     }
-    // Restauriramo tabelu sekcija, kljuc, id, velicna, ime sekcije
+    // Restauriramo tabelu sekcija, kljuc, id, velicna
     int brUlaza;
     binFajl.read((char*)&brUlaza, sizeof(int));
     map<int, UlazUTabeluSekcija> tabelaSekcija;
     for(int i = 0; i < brUlaza; i++){
       UlazUTabeluSekcija podaci;
-      string kljuc;
-
+     
       int duzina;
       string ime;
       binFajl.read((char*)&duzina, sizeof(int));
@@ -30,11 +29,8 @@ void Linker::dohvatiPodatke(){ // tabela sekcija, tabela simbola, relokacioni za
 
       binFajl.read((char*)(&podaci.idSekcije), sizeof(int));
       binFajl.read((char*)(&podaci.velicina), sizeof(int));
-      
-      binFajl.read((char*)&duzina, sizeof(int));
-      podaci.ime.resize(duzina); // Da napravimo prostora za ucitavanje imena
-      binFajl.read((char*)(podaci.ime.c_str()), duzina);
 
+      podaci.ime = ime; // Dodao
       podaci.adresaPocetka = 0;
       
       tabelaSekcija[podaci.idSekcije] = podaci;
@@ -47,7 +43,6 @@ void Linker::dohvatiPodatke(){ // tabela sekcija, tabela simbola, relokacioni za
     map<string, UlazUTabeluSimbola> tabelaSimbola;
     for(int i = 0; i < brUlaza; i++){
       UlazUTabeluSimbola podaci;
-      string kljuc;
 
       int duzina;
       string ime;
@@ -61,10 +56,7 @@ void Linker::dohvatiPodatke(){ // tabela sekcija, tabela simbola, relokacioni za
       binFajl.read((char*)(&podaci.eksteran), sizeof(podaci.eksteran));
       binFajl.read((char*)(&podaci.vrednost), sizeof(int));
 
-      binFajl.read((char*)&duzina, sizeof(int));
-      podaci.ime.resize(duzina); // Da napravimo prostora za ucitavanje imena
-      binFajl.read((char*)podaci.ime.c_str(), duzina);
-
+      podaci.ime = ime; // Dodao
       binFajl.read((char*)(&podaci.idSekcije), sizeof(int));
 
       tabelaSimbola[ime] = podaci;
@@ -161,7 +153,7 @@ void Linker::proveriPreklapanje(){
           min(spojeneSekcije[i->first].adresaPocetka + spojeneSekcije[i->first].velicina, 
               spojeneSekcije[j->first].adresaPocetka + spojeneSekcije[j->first].velicina))
       {
-        cout << "Postoji preklapanje sekcija: " << i->first << " i " << j->first << endl;
+        cout << "GRESKA: Postoji preklapanje sekcija: " << i->first << " i " << j->first << endl;
         exit(-1);
       }
     }
@@ -177,7 +169,7 @@ void Linker::mapirajSekcije(){
   for(auto &elem : postavljeneSekcije){
     map<string, SpojenaSekcija>::iterator i = spojeneSekcije.find(elem.first);
     if(i == spojeneSekcije.end()){
-      cout << "Naveli ste sekciju koja ne postoji: " << elem.first << endl;
+      cout << "GRESKA: Naveli ste sekciju koja ne postoji: " << elem.first << endl;
       exit(-1);
     }
     spojeneSekcije[elem.first].adresaPocetka = elem.second;
@@ -234,7 +226,7 @@ void Linker::spojiTabeleSimbola(){
     noviUlaz.globalan = false;
     noviUlaz.idSimbola = redBr++;
     noviUlaz.idSekcije = sek.second.idSpojeneSekcije;
-    noviUlaz.vrednost = 0; //sek.second.adresaPocetka;  !!!PROVERI OVO!!!
+    noviUlaz.vrednost = 0;
     krajnjaTabelaSimbola[sek.first] = noviUlaz; 
   }
 
@@ -254,7 +246,7 @@ void Linker::spojiTabeleSimbola(){
         if(i->second.globalan == true){ // Posto je globalan i nije eksteran dodajemo ga u tabelu, znamo da je definisan
           map<string, UlazUTabeluSimbola>::iterator src = krajnjaTabelaSimbola.find(i->first);
           if(src != krajnjaTabelaSimbola.end()){
-            cout << "GRESKA: Visestruka definicija simbola: " << i->first << "iz fajla " << f << endl;
+            cout << "GRESKA: Visestruka definicija simbola: " << i->first << " ,iz fajla: " << f << endl;
             exit(-1);
           }
           i->second.idSimbola = redBr++;
@@ -284,9 +276,10 @@ void Linker::spojiTabeleSimbola(){
         cout << "Nije definisan eksterni simbol: " << i->first << endl;
         exit(-1);
       }
-      else{ // A ako je u pitanju relokativni fajl onda jednostavno dodamo simbol kao ekstrni
+      else{ // A ako je u pitanju relokativni fajl onda jednostavno dodamo simbol kao eksterni
         i->second.idSimbola = redBr++;
         i->second.idSekcije = 0;
+        i->second.eksteran = true;
         krajnjaTabelaSimbola[i->first] = i->second;
       }
     }
@@ -321,15 +314,17 @@ void Linker::spojiRelokacioneTabele(){
   for(string f : ulazniFajlovi){
     for(map<string, vector<UlazURelokacionuTabelu>>::iterator i = tabeleRelokacija[f].begin(); i != tabeleRelokacija[f].end(); i++){
       for(UlazURelokacionuTabelu u : i->second){
-        // Ako je u ulazu sekcija, treba joj dodati ofset od pocetka istoimenih sekcija
-        unsigned int off = 0;
-        auto src = spojeneSekcije.find(u.simbol);
-        if(src != spojeneSekcije.end()){
-          off = spojeneSekcije[u.simbol].sekcijeKojeJeCine[f];
-        }
+        
         UlazURelokacionuTabelu noviUlaz;
+        auto src = spojeneSekcije.find(u.simbol);
+        // Ako je u ulazu sekcija, treba joj dodati ofset od pocetka istoimenih sekcija
+        if(src != spojeneSekcije.end()){
+          noviUlaz.addend = u.addend + spojeneSekcije[u.simbol].sekcijeKojeJeCine[f];
+        }
+        else{
+          noviUlaz.addend = u.addend;
+        }
         noviUlaz.simbol = u.simbol;
-        noviUlaz.addend = u.addend + off;
         noviUlaz.offset = u.offset + spojeneSekcije[i->first].sekcijeKojeJeCine[f];
         krajnjaTabeleRelokacija[i->first].push_back(noviUlaz);
       }
@@ -350,12 +345,12 @@ void Linker::ispisiKrajnjuRelokacionuTabelu(){
         fajl << "Za ovu sekciju ne postoje relokacioni zapisi\n\n";
       }
       else{
-        fajl << "Offset[hex]\t" << "Ime simbola\t" << "Tip\t" << "Addend[hex]" << endl;
+        fajl << "Offset[hex]\t" << "Ime simbola\t" << setw(8) << setfill(' ') << "Tip\t" << "Addend[hex]" << endl;
         for(int i = 0; i < i2->second.size(); i++){
           fajl << hex << setfill('0') << setw(8) << hex << i2->second.at(i).offset << dec << '\t';
           
-          fajl << setw(2)<< setfill(' ') << i2->second.at(i).simbol << '\t';
-          fajl << setw(6) << "R_TYPE ";
+          fajl << setw(12)<< setfill(' ') << i2->second.at(i).simbol << '\t';
+          fajl << setw(8) << "R_X32_32 ";
           fajl << hex << setfill('0') << setw(8) << hex << i2->second.at(i).addend << dec << endl << endl;
         }
       }
@@ -431,13 +426,13 @@ void Linker::razresiRelokacioneZapise(){ // Ovo se koristi ako je za linkovanje 
   // Sada idemo po relokacionim zapisima i krpimo
   for(auto &relZapis : krajnjaTabeleRelokacija){
     for(UlazURelokacionuTabelu ulaz : relZapis.second){
-      // Za sekcije ovo ce biti njihova pocetna adresa za simbole to ce biti njihova vtrednost unutar sekcije
-      // uvecana za adresu pocetka sekcije, to smo pripremili 
+      // Za sekcije ovo ce biti njihova pocetna adresa za simbole to ce biti njihova vrednost unutar sekcije
+      // uvecana za adresu pocetka sekcije, to smo pripremili u prvoj for petlji ove funkcije
       unsigned int vrednostSimbola = krajnjaTabelaSimbola[ulaz.simbol].vrednost;
       vrednostSimbola += ulaz.addend; // Ovo treba da upisemo na offset
       krajnjaTabelaKodova[relZapis.first]->seekp(ulaz.offset); // Postavimo kurzor na mesto prepravke
       krajnjaTabelaKodova[relZapis.first]->write((char*)&vrednostSimbola, sizeof(unsigned int));
-      krajnjaTabelaKodova[relZapis.first]->seekp(0, std::ios_base::end); // Vratimo kurzor na kraj fajla
+      krajnjaTabelaKodova[relZapis.first]->seekp(0, std::ios_base::end); // Vratimo kurzor na kraj koda
     }
   }
 
@@ -475,9 +470,6 @@ void Linker::napraviBinarniFajl(){
       binarniFajl.write((char*)(&i->second.idSekcije), sizeof(i->second.idSekcije));
       binarniFajl.write((char*)(&i->second.velicina), sizeof(i->second.velicina));
 
-      duzina = i->second.ime.length();
-      binarniFajl.write((char*)(&duzina), sizeof(int));
-      binarniFajl.write(i->second.ime.c_str(), duzina);
     }
 
     // Ispisemo tabelu simbola
@@ -496,10 +488,6 @@ void Linker::napraviBinarniFajl(){
       binarniFajl.write((char*)(&i->second.idSimbola), sizeof(i->second.idSimbola));
       binarniFajl.write((char*)(&i->second.eksteran), sizeof(i->second.eksteran));
       binarniFajl.write((char*)(&i->second.vrednost), sizeof(i->second.vrednost));
-
-      duzina = i->second.ime.length();
-      binarniFajl.write((char*)&duzina, sizeof(int));
-      binarniFajl.write(i->second.ime.c_str(), duzina);
 
       binarniFajl.write((char*)(&i->second.idSekcije), sizeof(int));
     }

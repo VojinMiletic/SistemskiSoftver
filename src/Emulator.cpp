@@ -38,39 +38,6 @@ void Emulator::procitajUlaz(){
   }
 }
 
-void Emulator::ispisiUlaz(){
-  ofstream fajl;
-  fajl.open("provera.txt");
-  fajl << "--------------------Ulazni kod za izvrsavanje---------------------\n";
-  for(Sekcija s : sekcije){
-      fajl << "------------Pocetna adresa: " << hex << s.pocetnaAdresa <<  "---------------" << endl;
-      fajl << dec;
-      if(s.velicina == 0){
-        fajl << "Sekcija nema podataka" << endl << endl;
-      }
-      else{
-        fajl << "Velicina sekcije[hex]: " << hex << s.velicina << dec << endl;
-        int brRedova = (s.velicina + 7) / 8 ;
-
-        for(int i = 0; i < brRedova; i++){
-          fajl << hex << setfill('0') << setw(4) << (0xffff & i*8) << ": ";
-          for(int j = i*8; j < (i+1)*8; j++){
-            char c;
-            if(j < s.velicina){
-              s.kod->read(&c, sizeof(char));
-            }
-            else{
-              c = 0;
-            }
-            fajl << hex << setfill('0') << setw(2) << (0xff & c) << ' ';
-          }
-          fajl << endl;
-        }
-      }
-      fajl << endl;
-    }
-    fajl.close();
-}
 
 void Emulator::mapirajMemoriju(){
   memorija = mmap(nullptr, VELICINA_MEMORIJE, PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_NORESERVE | MAP_PRIVATE, -1, 0 );
@@ -141,7 +108,7 @@ void Emulator::prepoznavanje_i_izvrsavanje_instrukcije(){
   }
   if(a < 0 || a > 15 || b < 0 || b > 15 || c < 0 || c > 15){
     // Nevalidan registar
-    cout << "GRESKA: Nevalidan registar za instrukciju operacionog koda: 0x" << hex <<  opKod << endl;
+    cout << "GRESKA EMULATOR: Nevalidan registar za instrukciju operacionog koda: 0x" << hex <<  opKod << endl;
     napraviPrekid(INSTRUKCIJSKA_GRESKA);
     return;
   }
@@ -150,67 +117,7 @@ void Emulator::prepoznavanje_i_izvrsavanje_instrukcije(){
     jelRadi = false;
   }
   else if(opKod == INT){
-    push(cs_registri[status]);
-    push(rpc);
-    rpc = cs_registri[handler]; // Skocicemo na adresu prekidne rutine 
-    cs_registri[cause] = SOFTVERSKI_PREKID; 
-    cs_registri[status] &= ~0x01; // Omogucimo softverski prekid
-  }
-  else if(opKod == XCHG){
-    unsigned long tmp = gp_registri[b];
-    gp_registri[b] = gp_registri[c];
-    gp_registri[c] = tmp;
-  }
-  else if(opKod == ADD){
-    gp_registri[a] = gp_registri[b] + gp_registri[c];
-  }
-  else if(opKod == SUB){
-    gp_registri[a] = gp_registri[b] - gp_registri[c];
-  }
-  else if(opKod == MUL){
-    
-    gp_registri[a] = gp_registri[b] * gp_registri[c];
-    
-  }
-  else if(opKod == DIV){
-    if(gp_registri[c] == 0){
-      cout << "GRESKA: Deljenje nulom\n";
-      napraviPrekid(INSTRUKCIJSKA_GRESKA);
-      return;
-    }
-    gp_registri[a] = gp_registri[b] / gp_registri[c];
-  }
-  else if(opKod == NOT){
-    gp_registri[a] = ~gp_registri[b];
-  }
-  else if(opKod == AND){
-    gp_registri[a] = gp_registri[b] & gp_registri[c];
-  }
-  else if(opKod == OR){
-    gp_registri[a] = gp_registri[b] | gp_registri[c];
-  }
-  else if(opKod == XOR){
-    gp_registri[a] = gp_registri[b] ^ gp_registri[c];
-  }
-  else if(opKod == SHL){
-    gp_registri[a] = gp_registri[b] << gp_registri[c];
-  }
-  else if(opKod == SHR){
-    gp_registri[a] = gp_registri[b] >> gp_registri[c];
-  }
-  else if(opKod == CSRRD){
-    gp_registri[a] = cs_registri[b];
-  }
-  else if(opKod == CSRWR){
-    cs_registri[a] = gp_registri[b];
-  }
-  else if(opKod == PUSH){
-    gp_registri[a] += d;
-    upisiInt(gp_registri[a], gp_registri[c]);
-  }
-  else if(opKod == POP){
-    gp_registri[a] = procitajInt(gp_registri[b]);
-    gp_registri[b] += d;
+    napraviPrekid(SOFTVERSKI_PREKID);
   }
   else if(opKod == JMP_MEM){
     rpc = procitajInt(gp_registri[a] + d);
@@ -256,6 +163,60 @@ void Emulator::prepoznavanje_i_izvrsavanje_instrukcije(){
     push(rpc);
     rpc = gp_registri[a] + d;
   }
+  else if(opKod == XCHG){
+    unsigned long tmp = gp_registri[b];
+    gp_registri[b] = gp_registri[c];
+    gp_registri[c] = tmp;
+  }
+  else if(opKod == ADD){
+    gp_registri[a] = gp_registri[b] + gp_registri[c];
+  }
+  else if(opKod == SUB){
+    gp_registri[a] = gp_registri[b] - gp_registri[c];
+  }
+  else if(opKod == MUL){
+    gp_registri[a] = gp_registri[b] * gp_registri[c];
+  }
+  else if(opKod == DIV){
+    if(gp_registri[c] == 0){
+      cout << "EMULATOR GRESKA: Deljenje nulom\n";
+      napraviPrekid(INSTRUKCIJSKA_GRESKA);
+      return;
+    }
+    gp_registri[a] = gp_registri[b] / gp_registri[c];
+  }
+  else if(opKod == NOT){
+    gp_registri[a] = ~gp_registri[b];
+  }
+  else if(opKod == AND){
+    gp_registri[a] = gp_registri[b] & gp_registri[c];
+  }
+  else if(opKod == OR){
+    gp_registri[a] = gp_registri[b] | gp_registri[c];
+  }
+  else if(opKod == XOR){
+    gp_registri[a] = gp_registri[b] ^ gp_registri[c];
+  }
+  else if(opKod == SHL){
+    gp_registri[a] = gp_registri[b] << gp_registri[c];
+  }
+  else if(opKod == SHR){
+    gp_registri[a] = gp_registri[b] >> gp_registri[c];
+  }
+  else if(opKod == CSRRD){
+    gp_registri[a] = cs_registri[b];
+  }
+  else if(opKod == CSRWR){
+    cs_registri[a] = gp_registri[b];
+  }
+  else if(opKod == PUSH){
+    gp_registri[a] += d;
+    upisiInt(gp_registri[a], gp_registri[c]);
+  }
+  else if(opKod == POP){
+    gp_registri[a] = procitajInt(gp_registri[b]);
+    gp_registri[b] += d;
+  }
   else if(opKod == LD_MEM_REG){  
     gp_registri[a] = procitajInt(gp_registri[b] + d);
   }
@@ -272,7 +233,7 @@ void Emulator::prepoznavanje_i_izvrsavanje_instrukcije(){
     cs_registri[a] = procitajInt(gp_registri[b] + gp_registri[c] + d);
   }
   else{
-    cout << "Nepoznata instrukcija sa kodom operacije: 0x" << hex << opKod << endl;
+    cout << "EMULATOR GRESKA: Nepoznata instrukcija sa kodom operacije: 0x" << hex << opKod << endl;
   }
 
 }
@@ -303,8 +264,7 @@ void Emulator::emuliraj(){
     if(prekidTerminala == true){
       napraviPrekid(PREKID_TERMINAL);
       prekidTerminala = false;
-    }
-    
+    } 
   }
 
   restartujTerminal();
@@ -327,9 +287,17 @@ unsigned int Emulator::procitajInt(unsigned int adresa){
 }
 
 void Emulator::upisiBajt(unsigned int adresa, char podatak){
-  // Ovde treba dodati nesto za terminal
+  // Ovde treba dodati nesto za terminal:
+  // U asemblerskom kodu ispis na terminal je ekvivalentan upisu u TERM_OUT registar koji se nalazi na adresi odredjenom 
+  // sa TERM_OUT promenljivom, ako je adresa za upis jednaka tom registru mi podatak ispisemo i na terminal 
   if(adresa == TERM_OUT){
-    cout << podatak;
+    cout << podatak << flush; // Radimo flush kako bi ispis na konzoli odmah bio vidljiv a ne po zavrsetku programa 
+                              // Mi se vrtimo u kodu u nekoj petlji, obicno se u C++ ispisi realiziju ili kada se 
+                              // bafer napuni ili kada se program zavrsi ili kada se pozove flush metoda
+                              // Posto mi ovde zelimo u petlji da gledamo kako se nesto ispisuje onog trenutka kada
+                              // pritisnemo taster(program se nije zavrsio a bafer nije pun) moramo da odradimo flush
+                              // jedan nacin je pozivom funkcije std::flush koja eksplicitno prazni bafer
+                              // drugi nacin je std::endl koja implicitno radi flush bafera 
   }
   char* bajt = static_cast<char*>((static_cast<char*>(memorija) + adresa));
   *bajt = podatak;
@@ -337,6 +305,8 @@ void Emulator::upisiBajt(unsigned int adresa, char podatak){
 
 void Emulator::upisiInt(unsigned int adresa, int podatak){
   // Ovde treba dodati nesto za terminal
+  // U asemblerskom kodu ispis na terminal je ekvivalentan upisu u TERM_OUT registar koji se nalazi na adresi odredjenom 
+  // sa TERM_OUT promenljivom, ako je adresa za upis jednaka tom registru mi podatak ispisemo i na terminal 
   if(adresa == TERM_OUT){
     cout << (char)podatak << flush;
   }
@@ -391,9 +361,13 @@ void Emulator::napraviTerminal(){
   
   novoPodesavanje = staroPodesavanje;
 
+  // iskljucili smo: -prikaz unosa odmah na terminalu(~ECHO i ~ECHONL)
+  //                 -to da mora da postoji prelazak u novi red da bi se procitao ulaz(~ICANON)
+  //                 -neke dodatne opcije koje ima terminal podrayumevano(~IEXTEN)
   novoPodesavanje.c_lflag &= ~(ECHO | ECHONL | ICANON | IEXTEN);
-  novoPodesavanje.c_cc[VTIME] = 0;
-  novoPodesavanje.c_cc[VMIN] = 0;
+  
+  novoPodesavanje.c_cc[VTIME] = 0; // Podesimo vreme cekanja na 0
+  novoPodesavanje.c_cc[VMIN] = 0;  // Podesimo minimalan broj karaktera koji se ceka na 0
 
   tcsetattr(STDIN_FILENO, TCSAFLUSH, &novoPodesavanje);
 
@@ -406,7 +380,7 @@ void Emulator::restartujTerminal(){
 void Emulator::citajSaStandardnogUlaza(){
   char karakter;
   if(read(STDIN_FILENO, &karakter, 1) == 1){
-    upisiBajt(TERM_IN, karakter);
+    upisiBajt(TERM_IN, karakter); // Ovde bi mozda bolje odgovaralo upisi int jer registar prima jedan karakter 
     prekidTerminala = true;
   }
 }

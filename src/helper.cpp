@@ -1,7 +1,6 @@
 #include "../inc/helper.hpp"
 
 
-vector<Leksicki_Element*>* elementi_help = nullptr;
 struct argument* argumenti_help;
 
 struct argument* napraviArgument(int br, char* sym){

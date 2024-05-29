@@ -29,24 +29,19 @@ Asembler::Asembler(): LC(0), redniBrojSimbola(0), redniBrojSekcije(0),trenutnaSe
 
 bool Asembler::prolaz(){
 
-  FILE* ulazniFajl = nullptr;
-  elementi_help = new vector<Leksicki_Element*>();
+  ulazniFajl = nullptr;
   argumenti_help = nullptr;
   
   ulazniFajl = fopen(imeUlaznogFajla ,"r");
-  if(!ulazniFajl) {cout << ("GRESKA: Neuspesno otvaranje ulaznog fajla\n"); exit(-1);}
+  if(!ulazniFajl) {cout << ("ASEMBLER GRESKA: Neuspesno otvaranje ulaznog fajla\n"); exit(-1);}
   
   yyin = ulazniFajl; // Damo lekseru i parseru da nam obrade ulazni fajl
   yyparse();
 
+  // Ako sam dosao dovde znaci da nije navedena .end direktiva
   fclose(ulazniFajl);
 
-  // Idemo liniju po liniju i obradjujemo je
-  for(int i = 0; i < elementi_help->size(); i++){
-    elementi_help->at(i)->prolaz();
-  }
-  // Ako sam dosao dovde to znaci da niko nije pozvao obradu .end direktive pa javljam gresku
-  cout << "GRESKA: Nije navedena .end direktiva" << endl;
+  std::cout << "ASEMBLER GRESKA: Nije navedena .end direktiva" << endl;
   exit(-1);
   return true;
 }
@@ -54,7 +49,7 @@ bool Asembler::prolaz(){
 bool Asembler::obradiLabelu(string imeLabele, int brLinije){
   
   if(trenutnaSekcija == ""){
-    cout << "GRESKA: Definisanje labele van sekcije na liniji: " << brLinije << endl;
+    cout << "ASEMBLER GRESKA: Definisanje labele van sekcije na liniji: " << brLinije << endl;
     exit(-1);
   }
   map<string, UlazUTabeluSimbola>::iterator iter = tabelaSimbola.find(imeLabele);
@@ -62,14 +57,12 @@ bool Asembler::obradiLabelu(string imeLabele, int brLinije){
   if(iter != tabelaSimbola.end()){
     // Ako je simbol vec definisan baci gresku
     if(iter->second.definisan == true){
-      greske[brLinije] = "GRESKA: Simbol je vec definisan";
-      cout << "GRESKA: Simbol je vec definisan, linija: " << brLinije << endl;
+      cout << "ASEMBLER GRESKA: Simbol je vec definisan, linija: " << brLinije << endl;
       return false;
     }
     // Ako je simbol eksterni baci gresku
     if(iter->second.isExtern == true){
-      greske[brLinije] = "GRESKA: Definicija eksternog simbola";
-      cout << "GRESKA: Definicija eksternog simbola, linija: " << brLinije << endl;
+      cout << "ASEMBLER GRESKA: Definicija eksternog simbola, linija: " << brLinije << endl;
       return false;
     }
     iter->second.definisan = true;
@@ -86,8 +79,6 @@ bool Asembler::obradiLabelu(string imeLabele, int brLinije){
     novi.sekcija = trenutnaSekcija;
     novi.vrednost = LC;
     novi.tabelaObracanjaUnapred = new vector<UlazUTabeluObracanjaUnapred>();
-    
-    
 
     tabelaSimbola[imeLabele] = novi;
   }
@@ -102,7 +93,7 @@ bool Asembler::obradiGlobal(string imeSimbola, int brLinije){
   if(iter != tabelaSimbola.end()){
     // Simbol se nalazi u tabeli
     if(iter->second.isExtern == true){
-      cout << "GRESKA: Proglasili ste eksterni simbol globalnim, linija: " << brLinije << endl;
+      cout << "ASEMBLER GRESKA: Proglasili ste eksterni simbol globalnim, linija: " << brLinije << endl;
       exit(-1);
     }
     iter->second.isGlobal = true;
@@ -133,11 +124,11 @@ bool Asembler::obradiExtern(string imeSimbola, int brLinije){
   
   if(iter != tabelaSimbola.end()){
     if(iter->second.definisan == true){
-      cout << "GRESKA: Simbol je definisan a proglasavate ga eksternim, linija: " << brLinije << endl;
+      cout << "ASEMBLER GRESKA: Simbol je definisan a proglasavate ga eksternim, linija: " << brLinije << endl;
       exit(-1);
     }
     if(iter->second.isGlobal == true){
-      cout << "GRESKA: Simbol je globalan a proglasavate ga eksternim, linija: " << brLinije << endl;
+      cout << "ASEMBLER GRESKA: Simbol je globalan a proglasavate ga eksternim, linija: " << brLinije << endl;
       exit(-1);
     }
     iter->second.isExtern = true;
@@ -167,7 +158,7 @@ bool Asembler::obradiSekciju(string imeSekcije, int brLinije){
   map<string,UlazUTabeluSekcija>::iterator iter = tabelaSekcija.find(imeSekcije);
   if(iter != tabelaSekcija.end()){
     // Sekcija je vec deklarisana
-    cout << "GRESKA: Sekcija je vec definisana, linija: " << brLinije << endl;
+    cout << "ASEMBLER GRESKA: Sekcija je vec definisana, linija: " << brLinije << endl;
     exit(-1);
   }
 
@@ -204,7 +195,7 @@ bool Asembler::obradiSkip(int vrednostLiterala, int brLinije){
   
   
   if(trenutnaSekcija == ""){
-    cout << "GRESKA: Definisanje skip direktive izvan sekcije, linija: " << brLinije << endl;
+    cout << "ASEMBLER GRESKA: Definisanje skip direktive izvan sekcije, linija: " << brLinije << endl;
     exit(-1);
   }
 
@@ -220,7 +211,7 @@ bool Asembler::obradiSkip(int vrednostLiterala, int brLinije){
 bool Asembler::obradiWord(pair<bool, Unija> argument, int brLinije){
 
   if(trenutnaSekcija == ""){
-    cout << "GRESKA: direktiva .word je izvan sekcije, linija: " << brLinije << endl;
+    cout << "ASEMBLER GRESKA: direktiva .word je izvan sekcije, linija: " << brLinije << endl;
     exit(-1);
   }
 
@@ -266,7 +257,7 @@ bool Asembler::obradiWord(pair<bool, Unija> argument, int brLinije){
 bool Asembler::obradiAscii(string tekst, int brLinije){
 
   if(trenutnaSekcija == ""){
-    cout << "GRESKA: Definisanje ascii direktive izvan sekcije, linija: " << brLinije << endl;
+    cout << "ASEMBLER GRESKA: Definisanje ascii direktive izvan sekcije, linija: " << brLinije << endl;
     exit(-1);
   }  
 
@@ -284,13 +275,15 @@ bool Asembler::obradiAscii(string tekst, int brLinije){
 
 bool Asembler::obradiEnd(int brLinije){
 
+  // Zatvaramo fajl iz koga smo citali asm kod
+  fclose(ulazniFajl);
   // Zavrsimo sa trenutnom sekcijom
   tabelaSekcija[trenutnaSekcija].velicina = LC;
   LC = 0;
   trenutnaSekcija = "";
 
   if(!proveriNedefinisaneSimbole()){
-    cout << "GRESKA: Nedefinisani simboli: ";
+    cout << "ASEMBLER GRESKA: Nedefinisani simboli: ";
     for(int i = 0; i < nedefinisaniSimboli->size(); i++){
       cout << nedefinisaniSimboli->at(i) << " ";
     }
@@ -453,7 +446,7 @@ bool Asembler::obradiEnd(int brLinije){
   ispisiKodSekcija();
   
   fajl.close(); // Zatvaramo txt dump fajl koji smo pravili 
-  std::cout << "Program zavrsen.\n";
+  std::cout << "Asembliranje zavrseno.\n";
   exit(0);
   return true;
 }
@@ -461,7 +454,7 @@ bool Asembler::obradiEnd(int brLinije){
 bool Asembler::obradiInstrukciju(yytokentype token, int brLinije, char* mnemonik, Operand* operand, int gpr1, int gpr2, int csr){
 
   if(trenutnaSekcija == ""){
-    cout << "GRESKA: Instrukcija je izvan sekcije, linija: " << brLinije << endl;
+    cout << "ASEMBLER GRESKA: Instrukcija je izvan sekcije, linija: " << brLinije << endl;
     exit(-1);
   }  
 
@@ -616,14 +609,12 @@ bool Asembler::obradiInstrukciju(yytokentype token, int brLinije, char* mnemonik
       }
       else if(operand->tipAdresiranja == REGINDPOM){ // ld [reg + literal/simbol], reg
         if(operand->simbol){
-          greske[brLinije] = "GRESKA: Vrednosti simbola nije poznata u toku asembliranja\n";
-          cout << "GRESKA: Vrednosti simbola nije poznata u toku asembliranja, linija: " << brLinije << endl;
+          cout << "ASEMBLER GRESKA: Vrednosti simbola nije poznata u toku asembliranja, linija: " << brLinije << endl;
           exit(-1);
         }
         else{
           if(operand->literal >= 4096){ // Veci od 12b
-            greske[brLinije] = "GRESKA: Širina literala je veca od 12b\n";
-            cout << "GRESKA: GRESKA: Širina literala je veca od 12b, linija: " << brLinije << endl;
+            cout << "ASEMBLER GRESKA: Širina literala je veca od 12b, linija: " << brLinije << endl;
             exit(-1);
           }
           int instr = napisiInstrukciju(LD_MEM_REG, gpr1, operand->gpr, 0, operand->literal);
@@ -650,8 +641,7 @@ bool Asembler::obradiInstrukciju(yytokentype token, int brLinije, char* mnemonik
     }
     case TOKEN_ST: {
       if(operand->tipAdresiranja == IMMED){
-        greske[brLinije] = "GRESKA: Neposredno adresiranje ne ide uz STORE.";
-        cout << "GRESKA: Neposredno adresiranje ne ide uz STORE, linija: " << brLinije << endl;
+        cout << "ASEMBLER GRESKA: Neposredno adresiranje ne ide uz STORE, linija: " << brLinije << endl;
         exit(-1);
       }
       else if(operand->tipAdresiranja == REGDIR){
@@ -664,14 +654,12 @@ bool Asembler::obradiInstrukciju(yytokentype token, int brLinije, char* mnemonik
       }
       else if(operand->tipAdresiranja == REGINDPOM){
         if(operand->simbol){
-          greske[brLinije] = "GRESKA: Vrednosti simbola nije poznata u toku asembliranja\n";
-          cout << "GRESKA: Vrednosti simbola nije poznata u toku asembliranja, linija: " << brLinije << endl;
+          cout << "ASEMBLER GRESKA: Vrednosti simbola nije poznata u toku asembliranja, linija: " << brLinije << endl;
           exit(-1);
         }
         else{
           if(operand->literal >= 4096){ // Veci od 12b
-            greske[brLinije] = "GRESKA: Širina literala je veca od 12b\n";
-            cout << "GRESKA: GRESKA: Širina literala je veca od 12b, linija: " << brLinije << endl;
+            cout << "ASEMBLER GRESKA: Širina literala je veca od 12b, linija: " << brLinije << endl;
             exit(-1);
           }
           int instr = napisiInstrukciju(ST_MEM, operand->gpr, 0, gpr1, operand->literal);
@@ -692,7 +680,6 @@ bool Asembler::obradiInstrukciju(yytokentype token, int brLinije, char* mnemonik
 }
 
 void Asembler::ispisiTabeluSimbola(){
-  //fajl.open("simboli.txt");
   fajl << "-------------------------------------Tabela simbola--------------------------------------" << endl;
   fajl << "Redni broj\t" << setw(15) << "Ime simbola\t" << "Vrednost\t" << "Tip\t" << setw(10) << "Sekcija\t\t\t" << "ID sekcije\t" << "Vezivanje\t" << "Definisan\n";
   vector<pair<string,UlazUTabeluSimbola>> ts(tabelaSimbola.begin(), tabelaSimbola.end());
@@ -711,11 +698,9 @@ void Asembler::ispisiTabeluSimbola(){
     fajl << setw(9) << (iter.second.definisan == true ? "DA" : "NE") << endl;
   }
   fajl << endl << endl;
-  //fajl.close();
 }
 
 void Asembler::ispisiTabeluSekcija(){
-  //fajl.open("simboli.txt", std::ios::app);
   fajl << "-------------Tabela sekcija-------------" << endl;
   fajl << "Redni broj\t" << "Ime sekcije\t" << "ID sekcije\t" << "Velicina\t" << endl;
   vector<pair<string,UlazUTabeluSekcija>> ts(tabelaSekcija.begin(), tabelaSekcija.end());
@@ -726,21 +711,18 @@ void Asembler::ispisiTabeluSekcija(){
     fajl << setw(8) << iter.second.velicina << endl;
   }
   fajl << endl;
-  //fajl.close();
 }
 
 void Asembler::ispisiKodSekcija(){
-  //fajl.open("simboli.txt", std::ios::app);
   fajl << "------------------------------Sadrzaj sekcija----------------------------------------- \n";
   
   for(map<string, UlazUTabeluSekcija>::iterator iter = tabelaSekcija.begin(); iter != tabelaSekcija.end(); iter++){
     fajl << "------------Sekcija: " << iter->first <<  "---------------" << endl;
-    fajl << dec;
     if(iter->second.velicina == 0){
       fajl << "Sekcija nema podataka" << endl << endl;
     }
     else{
-      fajl << "Velicina sekcije: " << iter->second.velicina << endl;
+      fajl << "Velicina sekcije[hex]: " << hex << iter->second.velicina << endl;
       int brRedova = (iter->second.velicina + 7) / 8 ;
 
       for(int i = 0; i < brRedova; i++){
@@ -761,11 +743,9 @@ void Asembler::ispisiKodSekcija(){
     fajl << endl;
   }
   fajl << endl << endl << endl;
-  //fajl.close();
 }
 
 void Asembler::napraviRelokacioniZapis(UlazUTabeluObracanjaUnapred ulaz){
-  // Potrebno je doraditi
   map<string, UlazUTabeluSimbola>::iterator iter = tabelaSimbola.find(ulaz.imeSimbola);
   if(iter != tabelaSimbola.end()){
     for(int i = 0; i < tabelaRelokacija[ulaz.trenutnaSekcija].size(); i++){
@@ -778,17 +758,15 @@ void Asembler::napraviRelokacioniZapis(UlazUTabeluObracanjaUnapred ulaz){
     novi.simbol = (iter->second.isGlobal || iter->second.isExtern) ? ulaz.imeSimbola : iter->second.sekcija;
     novi.redBrSimbola = (iter->second.isGlobal || iter->second.isExtern) ? iter->second.idSimbola : tabelaSimbola[iter->second.sekcija].idSimbola ;
     novi.addend = (iter->second.isGlobal || iter->second.isExtern) ? 0 : iter->second.vrednost;
-    novi.tip = "R_TYPE"; 
+    novi.tip = "R_X32_32"; // Lupio sam ovaj tip
     tabelaRelokacija[ulaz.trenutnaSekcija].push_back(novi);
   }
   else{
-    cout << "GRESKA: Imate nedefinisan simbol!" << endl;
+    cout << "ASEMBLER GRESKA: Imate nedefinisan simbol!" << endl;
   }
 }
 
 void Asembler::ispisiRelokacioneZapise(){
-  
-  //fajl.open("simboli.txt", std::ios::app);
   fajl << "--------------------------------Relokacioni zapisi----------------------------------" << endl;
 
   for(map<string, UlazUTabeluSekcija>::iterator iter = tabelaSekcija.begin(); iter != tabelaSekcija.end(); iter++){
@@ -801,20 +779,19 @@ void Asembler::ispisiRelokacioneZapise(){
       fajl << "Za ovu sekciju ne postoje relokacioni zapisi\n\n";
     }
     else{
-      fajl << "Offset\t" << "Ime simbola\t" << "ID simbola\t" << "Tip\t" << "Addend" << endl;
+      fajl << "Offset\t" << "Ime simbola\t" << "ID simbola\t" << setw(8) << setfill(' ') << "Tip\t" << "Addend" << endl;
       for(int i = 0; i < i2->second.size(); i++){
         fajl << hex << setfill('0') << setw(8) << i2->second.at(i).offset << '\t';
         
         fajl << setw(2)<< setfill(' ') << i2->second.at(i).simbol << '\t';
         fajl << setw(9) << dec << i2->second.at(i).redBrSimbola << '\t';
-        fajl << setw(3) << i2->second.at(i).tip << '\t';
+        fajl << setw(7) << i2->second.at(i).tip << '\t';
         fajl << hex << setfill('0') << setw(8) << i2->second.at(i).addend << endl << endl;
       }
     }
   }
 
   fajl << endl << endl;
-  //fajl.close();
 }
 
 int Asembler:: napisiInstrukciju(kodOperacije opKod, int a, int b, int c, int d){
@@ -897,8 +874,6 @@ void Asembler::napraviZakrpu(yytokentype instrukcija, Operand* operand, int gpr1
     novi.csr = csr;
 
     tabelaSekcija[trenutnaSekcija].tabelaObracanjaUnapred->push_back(novi);
-
-    
   }
 }
 
@@ -940,7 +915,6 @@ void Asembler::izbaciNepotrebneSimboleIzBazena(){
       }
       if(flag == true){ // Simbol treba izbaciti iz tabele, i azurirati tabelu
         int redBr = i->second.tabelaSimbolickihKonstanti[j->first].redniBroj;
-        //i->second.tabelaSimbolickihKonstanti.erase(j->first);
         i->second.tabelaSimbolickihKonstanti[j->first].redniBroj = -1;
         for(map<string,UlazUTabeluLiterala>::iterator i1 = i->second.tabelaSimbolickihKonstanti.begin(); 
                 i1 != i->second.tabelaSimbolickihKonstanti.end(); i1++){
@@ -1005,10 +979,6 @@ void Asembler::napraviBinarniFajl(){
     binarniFajl.write((char*)(&i->second.idSekcije), sizeof(i->second.idSekcije));
     binarniFajl.write((char*)(&i->second.velicina), sizeof(i->second.velicina));
 
-    duzina = i->second.imeSekcije.length();
-    binarniFajl.write((char*)(&duzina), sizeof(int));
-    binarniFajl.write(i->second.imeSekcije.c_str(), duzina);
-    
   }
 
 
@@ -1029,10 +999,6 @@ void Asembler::napraviBinarniFajl(){
     binarniFajl.write((char*)(&i->second.idSimbola), sizeof(i->second.idSimbola));
     binarniFajl.write((char*)(&i->second.isExtern), sizeof(i->second.isExtern));
     binarniFajl.write((char*)(&i->second.vrednost), sizeof(i->second.vrednost));
-
-    duzina = i->second.imeSimbola.length();
-    binarniFajl.write((char*)&duzina, sizeof(int));
-    binarniFajl.write(i->second.imeSimbola.c_str(), duzina);
 
     binarniFajl.write((char*)(&tabelaSekcija[i->second.sekcija].idSekcije), sizeof(int));
   }
