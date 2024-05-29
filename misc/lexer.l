@@ -14,9 +14,6 @@ DUZ "]"
 PLUS "+"
 ZAREZ ","
 
-HEX 0[Xx][0-9A-Fa-f]+ */
-COM #.*
-BLANCO [ \r\t]*
 GLOBAL \.global
 EXTERN \.extern
 SECTION \.section
@@ -24,6 +21,9 @@ WORD \.word
 SKIP \.skip
 ASCII \.ascii
 END \.end
+HEX 0[Xx][0-9A-Fa-f]+ */
+COM #.*
+BLANCO [ \r\t]*
 STRING \"[^"]+\"
 LITERAL_DECIMALNI -?[0-9]+
 LITERAL_HEKSA 0x[0-9A-Fa-f]+

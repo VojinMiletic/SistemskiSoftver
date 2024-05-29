@@ -106,57 +106,57 @@ direktiva
 
 instrukcija:
   TOKEN_HALT
-  { elementi_help->push_back(new Instrukcija(TOKEN_HALT, broj_linije, $1));}
+  { (new Instrukcija(TOKEN_HALT, broj_linije, $1))->prolaz();}
 | TOKEN_INT
-  {elementi_help->push_back(new Instrukcija(TOKEN_INT, broj_linije, $1));}  
+  {(new Instrukcija(TOKEN_INT, broj_linije, $1))->prolaz();}  
 | TOKEN_IRET
-  {elementi_help->push_back(new Instrukcija(TOKEN_IRET, broj_linije, $1));}
+  {(new Instrukcija(TOKEN_IRET, broj_linije, $1))->prolaz();}
 | TOKEN_CALL operand
-  {elementi_help->push_back(new Instrukcija(TOKEN_CALL, broj_linije, $1, $2));}
+  {(new Instrukcija(TOKEN_CALL, broj_linije, $1, $2))->prolaz();}
 | TOKEN_RET
-  {elementi_help->push_back(new Instrukcija(TOKEN_RET, broj_linije, $1));}
+  {(new Instrukcija(TOKEN_RET, broj_linije, $1))->prolaz();}
 | TOKEN_JMP operand
-  {elementi_help->push_back(new Instrukcija(TOKEN_JMP, broj_linije, $1, $2));}
+  {(new Instrukcija(TOKEN_JMP, broj_linije, $1, $2))->prolaz();}
 | TOKEN_BEQ TOKEN_GP_REGISTAR TOKEN_ZAREZ TOKEN_GP_REGISTAR TOKEN_ZAREZ operand
-  {elementi_help->push_back(new Instrukcija(TOKEN_BEQ,broj_linije,$1,$6,$2,$4));}
+  {(new Instrukcija(TOKEN_BEQ,broj_linije,$1,$6,$2,$4))->prolaz();}
 | TOKEN_BNE TOKEN_GP_REGISTAR TOKEN_ZAREZ TOKEN_GP_REGISTAR TOKEN_ZAREZ operand
-  {elementi_help->push_back(new Instrukcija(TOKEN_BNE,broj_linije,$1,$6,$2,$4));}  
+  {(new Instrukcija(TOKEN_BNE,broj_linije,$1,$6,$2,$4))->prolaz();}  
 | TOKEN_BGT TOKEN_GP_REGISTAR TOKEN_ZAREZ TOKEN_GP_REGISTAR TOKEN_ZAREZ operand
-  {elementi_help->push_back(new Instrukcija(TOKEN_BGT,broj_linije,$1,$6,$2,$4));}
+  {(new Instrukcija(TOKEN_BGT,broj_linije,$1,$6,$2,$4))->prolaz();}
 | TOKEN_PUSH TOKEN_GP_REGISTAR
-  {elementi_help->push_back(new Instrukcija(TOKEN_PUSH, broj_linije, $1,nullptr, $2));}
+  {(new Instrukcija(TOKEN_PUSH, broj_linije, $1,nullptr, $2))->prolaz();}
 | TOKEN_POP TOKEN_GP_REGISTAR
-  {elementi_help->push_back(new Instrukcija(TOKEN_POP, broj_linije, $1,nullptr, $2));}
+  {(new Instrukcija(TOKEN_POP, broj_linije, $1,nullptr, $2))->prolaz();}
 | TOKEN_XCHG TOKEN_GP_REGISTAR TOKEN_ZAREZ TOKEN_GP_REGISTAR
-  {elementi_help->push_back(new Instrukcija(TOKEN_XCHG,broj_linije,$1,nullptr,$2,$4));}
+  {(new Instrukcija(TOKEN_XCHG,broj_linije,$1,nullptr,$2,$4))->prolaz();}
 | TOKEN_ADD TOKEN_GP_REGISTAR TOKEN_ZAREZ TOKEN_GP_REGISTAR
-  {elementi_help->push_back(new Instrukcija(TOKEN_ADD,broj_linije,$1,nullptr,$2,$4));}
+  {(new Instrukcija(TOKEN_ADD,broj_linije,$1,nullptr,$2,$4))->prolaz();}
 | TOKEN_SUB TOKEN_GP_REGISTAR TOKEN_ZAREZ TOKEN_GP_REGISTAR
-  {elementi_help->push_back(new Instrukcija(TOKEN_SUB,broj_linije,$1,nullptr,$2,$4));}
+  {(new Instrukcija(TOKEN_SUB,broj_linije,$1,nullptr,$2,$4))->prolaz();}
 | TOKEN_MUL TOKEN_GP_REGISTAR TOKEN_ZAREZ TOKEN_GP_REGISTAR
-  {elementi_help->push_back(new Instrukcija(TOKEN_MUL,broj_linije,$1,nullptr,$2,$4));}
+  {(new Instrukcija(TOKEN_MUL,broj_linije,$1,nullptr,$2,$4))->prolaz();}
 | TOKEN_DIV TOKEN_GP_REGISTAR TOKEN_ZAREZ TOKEN_GP_REGISTAR
-  {elementi_help->push_back(new Instrukcija(TOKEN_DIV,broj_linije,$1,nullptr,$2,$4));}
+  {(new Instrukcija(TOKEN_DIV,broj_linije,$1,nullptr,$2,$4))->prolaz();}
 | TOKEN_NOT TOKEN_GP_REGISTAR
-  {elementi_help->push_back(new Instrukcija(TOKEN_NOT,broj_linije,$1,nullptr,$2));}
+  {(new Instrukcija(TOKEN_NOT,broj_linije,$1,nullptr,$2))->prolaz();}
 | TOKEN_AND TOKEN_GP_REGISTAR TOKEN_ZAREZ TOKEN_GP_REGISTAR
-  {elementi_help->push_back(new Instrukcija(TOKEN_AND,broj_linije,$1,nullptr,$2,$4));}
+  {(new Instrukcija(TOKEN_AND,broj_linije,$1,nullptr,$2,$4))->prolaz();}
 | TOKEN_OR TOKEN_GP_REGISTAR TOKEN_ZAREZ TOKEN_GP_REGISTAR
-  {elementi_help->push_back(new Instrukcija(TOKEN_OR,broj_linije,$1,nullptr,$2,$4));}
+  {(new Instrukcija(TOKEN_OR,broj_linije,$1,nullptr,$2,$4))->prolaz();}
 | TOKEN_XOR TOKEN_GP_REGISTAR TOKEN_ZAREZ TOKEN_GP_REGISTAR
-  {elementi_help->push_back(new Instrukcija(TOKEN_XOR,broj_linije,$1,nullptr,$2,$4));}
+  {(new Instrukcija(TOKEN_XOR,broj_linije,$1,nullptr,$2,$4))->prolaz();}
 | TOKEN_SHL TOKEN_GP_REGISTAR TOKEN_ZAREZ TOKEN_GP_REGISTAR
-  {elementi_help->push_back(new Instrukcija(TOKEN_SHL,broj_linije,$1,nullptr,$2,$4));}
+  {(new Instrukcija(TOKEN_SHL,broj_linije,$1,nullptr,$2,$4))->prolaz();}
 | TOKEN_SHR TOKEN_GP_REGISTAR TOKEN_ZAREZ TOKEN_GP_REGISTAR
-  {elementi_help->push_back(new Instrukcija(TOKEN_SHR,broj_linije,$1,nullptr,$2,$4));}
+  {(new Instrukcija(TOKEN_SHR,broj_linije,$1,nullptr,$2,$4))->prolaz();}
 | TOKEN_LD operand TOKEN_ZAREZ TOKEN_GP_REGISTAR
-  {elementi_help->push_back(new Instrukcija(TOKEN_LD, broj_linije, $1, $2, $4));}
+  {(new Instrukcija(TOKEN_LD, broj_linije, $1, $2, $4))->prolaz();}
 | TOKEN_ST TOKEN_GP_REGISTAR TOKEN_ZAREZ operand
-  {elementi_help->push_back(new Instrukcija(TOKEN_ST, broj_linije, $1, $4, $2));}
+  {(new Instrukcija(TOKEN_ST, broj_linije, $1, $4, $2))->prolaz();}
 | TOKEN_CSRRD TOKEN_CS_REGISTAR TOKEN_ZAREZ TOKEN_GP_REGISTAR
-  {elementi_help->push_back(new Instrukcija(TOKEN_CSRRD,broj_linije, $1, nullptr, $4, -1, $2));}
+  {(new Instrukcija(TOKEN_CSRRD,broj_linije, $1, nullptr, $4, -1, $2))->prolaz();}
 | TOKEN_CSRWR TOKEN_GP_REGISTAR TOKEN_ZAREZ TOKEN_CS_REGISTAR
-  {elementi_help->push_back(new Instrukcija(TOKEN_CSRWR, broj_linije, $1, nullptr, $2, -1, $4));}
+  {(new Instrukcija(TOKEN_CSRWR, broj_linije, $1, nullptr, $2, -1, $4))->prolaz();}
 ;
 
 
@@ -192,7 +192,7 @@ labela:
   {
     string mnemonik = $1;
     mnemonik.pop_back();
-    elementi_help->push_back(new Direktiva(TOKEN_LABELA,broj_linije, mnemonik));
+    (new Direktiva(TOKEN_LABELA,broj_linije, mnemonik))->prolaz();
   }
 ;
 
@@ -209,7 +209,7 @@ direktiva:
     }
     freeArgument(argumenti_help);
     argumenti_help = nullptr;
-    elementi_help->push_back(new Direktiva(TOKEN_GLOBAL, broj_linije,$1,vektor_argumenata));
+    (new Direktiva(TOKEN_GLOBAL, broj_linije,$1,vektor_argumenata))->prolaz();
   }
 | TOKEN_EXTERN lista_simbola
   {
@@ -221,13 +221,13 @@ direktiva:
     }
     freeArgument(argumenti_help);
     argumenti_help = nullptr;
-    elementi_help->push_back(new Direktiva(TOKEN_EXTERN, broj_linije,$1,vektor_argumenata));
+    (new Direktiva(TOKEN_EXTERN, broj_linije,$1,vektor_argumenata))->prolaz();
   }
 | TOKEN_SECTION TOKEN_SIMBOL
   {
     vector<pair<bool,Unija>>* vektor_argumenata = new vector<pair<bool,Unija>>();
     vektor_argumenata->push_back(make_pair(false, (Unija){.simbol = $2}));
-    elementi_help->push_back(new Direktiva(TOKEN_SECTION, broj_linije,$1, vektor_argumenata));
+    (new Direktiva(TOKEN_SECTION, broj_linije,$1, vektor_argumenata))->prolaz();
   }
 | TOKEN_WORD lista_literala_ili_simbola
   {
@@ -244,23 +244,23 @@ direktiva:
     }
     freeArgument(argumenti_help);
     argumenti_help = nullptr;
-    elementi_help->push_back(new Direktiva(TOKEN_WORD, broj_linije, $1, vektor_argumenata));
+    (new Direktiva(TOKEN_WORD, broj_linije, $1, vektor_argumenata))->prolaz();
   }
 | TOKEN_SKIP TOKEN_LITERAL
   {
     vector<pair<bool,Unija>>* vektor_argumenata = new vector<pair<bool,Unija>>();
     vektor_argumenata->push_back(make_pair(true,(Unija){.broj = $2}));
-    elementi_help->push_back(new Direktiva(TOKEN_SKIP, broj_linije, $1, vektor_argumenata));
+    (new Direktiva(TOKEN_SKIP, broj_linije, $1, vektor_argumenata))->prolaz();
   }
 | TOKEN_ASCII TOKEN_STRING
   {
     vector<pair<bool,Unija>>* vektor_argumenata = new vector<pair<bool,Unija>>();
     vektor_argumenata->push_back(make_pair(false, (Unija){.simbol = $2}));
-    elementi_help->push_back(new Direktiva(TOKEN_ASCII, broj_linije, $1, vektor_argumenata));
+    (new Direktiva(TOKEN_ASCII, broj_linije, $1, vektor_argumenata))->prolaz();
   }  
 | TOKEN_END
   {
-    elementi_help->push_back(new Direktiva(TOKEN_END, broj_linije, $1));
+    (new Direktiva(TOKEN_END, broj_linije, $1))->prolaz();
   }
 ;
 

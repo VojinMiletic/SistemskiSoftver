@@ -66,7 +66,7 @@
 
 
 /* First part of user prologue.  */
-#line 1 "./misc/parser.y"
+#line 1 "./misc/parserKopija.y"
 
   #include "../inc/helper.hpp"
   #include "../inc/Operand.hpp"
@@ -177,7 +177,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 13 "./misc/parser.y"
+#line 13 "./misc/parserKopija.y"
 
   int broj;
   char *simbol;
@@ -1466,13 +1466,13 @@ yyreduce:
   switch (yyn)
     {
   case 4:
-#line 81 "./misc/parser.y"
+#line 81 "./misc/parserKopija.y"
 {}
 #line 1472 "parser.cpp"
     break;
 
   case 5:
-#line 86 "./misc/parser.y"
+#line 86 "./misc/parserKopija.y"
 {
   broj_linije++;
 }
@@ -1480,7 +1480,7 @@ yyreduce:
     break;
 
   case 6:
-#line 90 "./misc/parser.y"
+#line 90 "./misc/parserKopija.y"
 {
   broj_linije++;
 }
@@ -1488,245 +1488,245 @@ yyreduce:
     break;
 
   case 13:
-#line 109 "./misc/parser.y"
-  { elementi_help->push_back(new Instrukcija(TOKEN_HALT, broj_linije, (yyvsp[0].simbol)));}
+#line 109 "./misc/parserKopija.y"
+  { (new Instrukcija(TOKEN_HALT, broj_linije, (yyvsp[0].simbol)))->prolaz();}
 #line 1494 "parser.cpp"
     break;
 
   case 14:
-#line 111 "./misc/parser.y"
-  {elementi_help->push_back(new Instrukcija(TOKEN_INT, broj_linije, (yyvsp[0].simbol)));}
+#line 111 "./misc/parserKopija.y"
+  {(new Instrukcija(TOKEN_INT, broj_linije, (yyvsp[0].simbol)))->prolaz();}
 #line 1500 "parser.cpp"
     break;
 
   case 15:
-#line 113 "./misc/parser.y"
-  {elementi_help->push_back(new Instrukcija(TOKEN_IRET, broj_linije, (yyvsp[0].simbol)));}
+#line 113 "./misc/parserKopija.y"
+  {(new Instrukcija(TOKEN_IRET, broj_linije, (yyvsp[0].simbol)))->prolaz();}
 #line 1506 "parser.cpp"
     break;
 
   case 16:
-#line 115 "./misc/parser.y"
-  {elementi_help->push_back(new Instrukcija(TOKEN_CALL, broj_linije, (yyvsp[-1].simbol), (yyvsp[0].opr)));}
+#line 115 "./misc/parserKopija.y"
+  {(new Instrukcija(TOKEN_CALL, broj_linije, (yyvsp[-1].simbol), (yyvsp[0].opr)))->prolaz();}
 #line 1512 "parser.cpp"
     break;
 
   case 17:
-#line 117 "./misc/parser.y"
-  {elementi_help->push_back(new Instrukcija(TOKEN_RET, broj_linije, (yyvsp[0].simbol)));}
+#line 117 "./misc/parserKopija.y"
+  {(new Instrukcija(TOKEN_RET, broj_linije, (yyvsp[0].simbol)))->prolaz();}
 #line 1518 "parser.cpp"
     break;
 
   case 18:
-#line 119 "./misc/parser.y"
-  {elementi_help->push_back(new Instrukcija(TOKEN_JMP, broj_linije, (yyvsp[-1].simbol), (yyvsp[0].opr)));}
+#line 119 "./misc/parserKopija.y"
+  {(new Instrukcija(TOKEN_JMP, broj_linije, (yyvsp[-1].simbol), (yyvsp[0].opr)))->prolaz();}
 #line 1524 "parser.cpp"
     break;
 
   case 19:
-#line 121 "./misc/parser.y"
-  {elementi_help->push_back(new Instrukcija(TOKEN_BEQ,broj_linije,(yyvsp[-5].simbol),(yyvsp[0].opr),(yyvsp[-4].broj),(yyvsp[-2].broj)));}
+#line 121 "./misc/parserKopija.y"
+  {(new Instrukcija(TOKEN_BEQ,broj_linije,(yyvsp[-5].simbol),(yyvsp[0].opr),(yyvsp[-4].broj),(yyvsp[-2].broj)))->prolaz();}
 #line 1530 "parser.cpp"
     break;
 
   case 20:
-#line 123 "./misc/parser.y"
-  {elementi_help->push_back(new Instrukcija(TOKEN_BNE,broj_linije,(yyvsp[-5].simbol),(yyvsp[0].opr),(yyvsp[-4].broj),(yyvsp[-2].broj)));}
+#line 123 "./misc/parserKopija.y"
+  {(new Instrukcija(TOKEN_BNE,broj_linije,(yyvsp[-5].simbol),(yyvsp[0].opr),(yyvsp[-4].broj),(yyvsp[-2].broj)))->prolaz();}
 #line 1536 "parser.cpp"
     break;
 
   case 21:
-#line 125 "./misc/parser.y"
-  {elementi_help->push_back(new Instrukcija(TOKEN_BGT,broj_linije,(yyvsp[-5].simbol),(yyvsp[0].opr),(yyvsp[-4].broj),(yyvsp[-2].broj)));}
+#line 125 "./misc/parserKopija.y"
+  {(new Instrukcija(TOKEN_BGT,broj_linije,(yyvsp[-5].simbol),(yyvsp[0].opr),(yyvsp[-4].broj),(yyvsp[-2].broj)))->prolaz();}
 #line 1542 "parser.cpp"
     break;
 
   case 22:
-#line 127 "./misc/parser.y"
-  {elementi_help->push_back(new Instrukcija(TOKEN_PUSH, broj_linije, (yyvsp[-1].simbol),nullptr, (yyvsp[0].broj)));}
+#line 127 "./misc/parserKopija.y"
+  {(new Instrukcija(TOKEN_PUSH, broj_linije, (yyvsp[-1].simbol),nullptr, (yyvsp[0].broj)))->prolaz();}
 #line 1548 "parser.cpp"
     break;
 
   case 23:
-#line 129 "./misc/parser.y"
-  {elementi_help->push_back(new Instrukcija(TOKEN_POP, broj_linije, (yyvsp[-1].simbol),nullptr, (yyvsp[0].broj)));}
+#line 129 "./misc/parserKopija.y"
+  {(new Instrukcija(TOKEN_POP, broj_linije, (yyvsp[-1].simbol),nullptr, (yyvsp[0].broj)))->prolaz();}
 #line 1554 "parser.cpp"
     break;
 
   case 24:
-#line 131 "./misc/parser.y"
-  {elementi_help->push_back(new Instrukcija(TOKEN_XCHG,broj_linije,(yyvsp[-3].simbol),nullptr,(yyvsp[-2].broj),(yyvsp[0].broj)));}
+#line 131 "./misc/parserKopija.y"
+  {(new Instrukcija(TOKEN_XCHG,broj_linije,(yyvsp[-3].simbol),nullptr,(yyvsp[-2].broj),(yyvsp[0].broj)))->prolaz();}
 #line 1560 "parser.cpp"
     break;
 
   case 25:
-#line 133 "./misc/parser.y"
-  {elementi_help->push_back(new Instrukcija(TOKEN_ADD,broj_linije,(yyvsp[-3].simbol),nullptr,(yyvsp[-2].broj),(yyvsp[0].broj)));}
+#line 133 "./misc/parserKopija.y"
+  {(new Instrukcija(TOKEN_ADD,broj_linije,(yyvsp[-3].simbol),nullptr,(yyvsp[-2].broj),(yyvsp[0].broj)))->prolaz();}
 #line 1566 "parser.cpp"
     break;
 
   case 26:
-#line 135 "./misc/parser.y"
-  {elementi_help->push_back(new Instrukcija(TOKEN_SUB,broj_linije,(yyvsp[-3].simbol),nullptr,(yyvsp[-2].broj),(yyvsp[0].broj)));}
+#line 135 "./misc/parserKopija.y"
+  {(new Instrukcija(TOKEN_SUB,broj_linije,(yyvsp[-3].simbol),nullptr,(yyvsp[-2].broj),(yyvsp[0].broj)))->prolaz();}
 #line 1572 "parser.cpp"
     break;
 
   case 27:
-#line 137 "./misc/parser.y"
-  {elementi_help->push_back(new Instrukcija(TOKEN_MUL,broj_linije,(yyvsp[-3].simbol),nullptr,(yyvsp[-2].broj),(yyvsp[0].broj)));}
+#line 137 "./misc/parserKopija.y"
+  {(new Instrukcija(TOKEN_MUL,broj_linije,(yyvsp[-3].simbol),nullptr,(yyvsp[-2].broj),(yyvsp[0].broj)))->prolaz();}
 #line 1578 "parser.cpp"
     break;
 
   case 28:
-#line 139 "./misc/parser.y"
-  {elementi_help->push_back(new Instrukcija(TOKEN_DIV,broj_linije,(yyvsp[-3].simbol),nullptr,(yyvsp[-2].broj),(yyvsp[0].broj)));}
+#line 139 "./misc/parserKopija.y"
+  {(new Instrukcija(TOKEN_DIV,broj_linije,(yyvsp[-3].simbol),nullptr,(yyvsp[-2].broj),(yyvsp[0].broj)))->prolaz();}
 #line 1584 "parser.cpp"
     break;
 
   case 29:
-#line 141 "./misc/parser.y"
-  {elementi_help->push_back(new Instrukcija(TOKEN_NOT,broj_linije,(yyvsp[-1].simbol),nullptr,(yyvsp[0].broj)));}
+#line 141 "./misc/parserKopija.y"
+  {(new Instrukcija(TOKEN_NOT,broj_linije,(yyvsp[-1].simbol),nullptr,(yyvsp[0].broj)))->prolaz();}
 #line 1590 "parser.cpp"
     break;
 
   case 30:
-#line 143 "./misc/parser.y"
-  {elementi_help->push_back(new Instrukcija(TOKEN_AND,broj_linije,(yyvsp[-3].simbol),nullptr,(yyvsp[-2].broj),(yyvsp[0].broj)));}
+#line 143 "./misc/parserKopija.y"
+  {(new Instrukcija(TOKEN_AND,broj_linije,(yyvsp[-3].simbol),nullptr,(yyvsp[-2].broj),(yyvsp[0].broj)))->prolaz();}
 #line 1596 "parser.cpp"
     break;
 
   case 31:
-#line 145 "./misc/parser.y"
-  {elementi_help->push_back(new Instrukcija(TOKEN_OR,broj_linije,(yyvsp[-3].simbol),nullptr,(yyvsp[-2].broj),(yyvsp[0].broj)));}
+#line 145 "./misc/parserKopija.y"
+  {(new Instrukcija(TOKEN_OR,broj_linije,(yyvsp[-3].simbol),nullptr,(yyvsp[-2].broj),(yyvsp[0].broj)))->prolaz();}
 #line 1602 "parser.cpp"
     break;
 
   case 32:
-#line 147 "./misc/parser.y"
-  {elementi_help->push_back(new Instrukcija(TOKEN_XOR,broj_linije,(yyvsp[-3].simbol),nullptr,(yyvsp[-2].broj),(yyvsp[0].broj)));}
+#line 147 "./misc/parserKopija.y"
+  {(new Instrukcija(TOKEN_XOR,broj_linije,(yyvsp[-3].simbol),nullptr,(yyvsp[-2].broj),(yyvsp[0].broj)))->prolaz();}
 #line 1608 "parser.cpp"
     break;
 
   case 33:
-#line 149 "./misc/parser.y"
-  {elementi_help->push_back(new Instrukcija(TOKEN_SHL,broj_linije,(yyvsp[-3].simbol),nullptr,(yyvsp[-2].broj),(yyvsp[0].broj)));}
+#line 149 "./misc/parserKopija.y"
+  {(new Instrukcija(TOKEN_SHL,broj_linije,(yyvsp[-3].simbol),nullptr,(yyvsp[-2].broj),(yyvsp[0].broj)))->prolaz();}
 #line 1614 "parser.cpp"
     break;
 
   case 34:
-#line 151 "./misc/parser.y"
-  {elementi_help->push_back(new Instrukcija(TOKEN_SHR,broj_linije,(yyvsp[-3].simbol),nullptr,(yyvsp[-2].broj),(yyvsp[0].broj)));}
+#line 151 "./misc/parserKopija.y"
+  {(new Instrukcija(TOKEN_SHR,broj_linije,(yyvsp[-3].simbol),nullptr,(yyvsp[-2].broj),(yyvsp[0].broj)))->prolaz();}
 #line 1620 "parser.cpp"
     break;
 
   case 35:
-#line 153 "./misc/parser.y"
-  {elementi_help->push_back(new Instrukcija(TOKEN_LD, broj_linije, (yyvsp[-3].simbol), (yyvsp[-2].opr), (yyvsp[0].broj)));}
+#line 153 "./misc/parserKopija.y"
+  {(new Instrukcija(TOKEN_LD, broj_linije, (yyvsp[-3].simbol), (yyvsp[-2].opr), (yyvsp[0].broj)))->prolaz();}
 #line 1626 "parser.cpp"
     break;
 
   case 36:
-#line 155 "./misc/parser.y"
-  {elementi_help->push_back(new Instrukcija(TOKEN_ST, broj_linije, (yyvsp[-3].simbol), (yyvsp[0].opr), (yyvsp[-2].broj)));}
+#line 155 "./misc/parserKopija.y"
+  {(new Instrukcija(TOKEN_ST, broj_linije, (yyvsp[-3].simbol), (yyvsp[0].opr), (yyvsp[-2].broj)))->prolaz();}
 #line 1632 "parser.cpp"
     break;
 
   case 37:
-#line 157 "./misc/parser.y"
-  {elementi_help->push_back(new Instrukcija(TOKEN_CSRRD,broj_linije, (yyvsp[-3].simbol), nullptr, (yyvsp[0].broj), -1, (yyvsp[-2].broj)));}
+#line 157 "./misc/parserKopija.y"
+  {(new Instrukcija(TOKEN_CSRRD,broj_linije, (yyvsp[-3].simbol), nullptr, (yyvsp[0].broj), -1, (yyvsp[-2].broj)))->prolaz();}
 #line 1638 "parser.cpp"
     break;
 
   case 38:
-#line 159 "./misc/parser.y"
-  {elementi_help->push_back(new Instrukcija(TOKEN_CSRWR, broj_linije, (yyvsp[-3].simbol), nullptr, (yyvsp[-2].broj), -1, (yyvsp[0].broj)));}
+#line 159 "./misc/parserKopija.y"
+  {(new Instrukcija(TOKEN_CSRWR, broj_linije, (yyvsp[-3].simbol), nullptr, (yyvsp[-2].broj), -1, (yyvsp[0].broj)))->prolaz();}
 #line 1644 "parser.cpp"
     break;
 
   case 39:
-#line 165 "./misc/parser.y"
+#line 165 "./misc/parserKopija.y"
   { (yyval.opr) = new Operand(IMMED, (yyvsp[0].broj));}
 #line 1650 "parser.cpp"
     break;
 
   case 40:
-#line 167 "./misc/parser.y"
+#line 167 "./misc/parserKopija.y"
   { (yyval.opr) = new Operand(IMMED, -1, (yyvsp[0].simbol));}
 #line 1656 "parser.cpp"
     break;
 
   case 41:
-#line 169 "./misc/parser.y"
+#line 169 "./misc/parserKopija.y"
   { (yyval.opr) = new Operand(MEMDIR, (yyvsp[0].broj));}
 #line 1662 "parser.cpp"
     break;
 
   case 42:
-#line 171 "./misc/parser.y"
+#line 171 "./misc/parserKopija.y"
   { (yyval.opr) = new Operand(MEMDIR, -1, (yyvsp[0].simbol));}
 #line 1668 "parser.cpp"
     break;
 
   case 43:
-#line 173 "./misc/parser.y"
+#line 173 "./misc/parserKopija.y"
   { (yyval.opr) = new Operand(REGDIR, -1, nullptr, (yyvsp[0].broj));}
 #line 1674 "parser.cpp"
     break;
 
   case 44:
-#line 175 "./misc/parser.y"
+#line 175 "./misc/parserKopija.y"
   { (yyval.opr) = new Operand(REGDIR, -1, nullptr, -1, (yyvsp[0].broj), true);}
 #line 1680 "parser.cpp"
     break;
 
   case 45:
-#line 177 "./misc/parser.y"
+#line 177 "./misc/parserKopija.y"
   { (yyval.opr) = new Operand(REGIND, -1, nullptr, (yyvsp[-1].broj));}
 #line 1686 "parser.cpp"
     break;
 
   case 46:
-#line 179 "./misc/parser.y"
+#line 179 "./misc/parserKopija.y"
   { (yyval.opr) = new Operand(REGIND, -1, nullptr, -1, (yyvsp[-1].broj), true);}
 #line 1692 "parser.cpp"
     break;
 
   case 47:
-#line 181 "./misc/parser.y"
+#line 181 "./misc/parserKopija.y"
   {(yyval.opr) = new Operand(REGINDPOM, (yyvsp[-1].broj), nullptr, (yyvsp[-3].broj));}
 #line 1698 "parser.cpp"
     break;
 
   case 48:
-#line 183 "./misc/parser.y"
+#line 183 "./misc/parserKopija.y"
   {(yyval.opr) = new Operand(REGINDPOM, (yyvsp[-1].broj), nullptr,-1, (yyvsp[-3].broj), true);}
 #line 1704 "parser.cpp"
     break;
 
   case 49:
-#line 185 "./misc/parser.y"
+#line 185 "./misc/parserKopija.y"
   {(yyval.opr) = new Operand(REGINDPOM,-1,(yyvsp[-1].simbol),(yyvsp[-3].broj));}
 #line 1710 "parser.cpp"
     break;
 
   case 50:
-#line 187 "./misc/parser.y"
+#line 187 "./misc/parserKopija.y"
   {(yyval.opr) = new Operand(REGINDPOM,-1,(yyvsp[-1].simbol),-1,(yyvsp[-3].broj),true);}
 #line 1716 "parser.cpp"
     break;
 
   case 51:
-#line 192 "./misc/parser.y"
+#line 192 "./misc/parserKopija.y"
   {
     string mnemonik = (yyvsp[0].simbol);
     mnemonik.pop_back();
-    elementi_help->push_back(new Direktiva(TOKEN_LABELA,broj_linije, mnemonik));
+    (new Direktiva(TOKEN_LABELA,broj_linije, mnemonik))->prolaz();
   }
 #line 1726 "parser.cpp"
     break;
 
   case 52:
-#line 203 "./misc/parser.y"
+#line 203 "./misc/parserKopija.y"
   {
     struct argument* lista_argumenata = (yyvsp[0].arg);
     vector<pair<bool,Unija>>* vektor_argumenata = new vector<pair<bool,Unija>>();
@@ -1736,13 +1736,13 @@ yyreduce:
     }
     freeArgument(argumenti_help);
     argumenti_help = nullptr;
-    elementi_help->push_back(new Direktiva(TOKEN_GLOBAL, broj_linije,(yyvsp[-1].simbol),vektor_argumenata));
+    (new Direktiva(TOKEN_GLOBAL, broj_linije,(yyvsp[-1].simbol),vektor_argumenata))->prolaz();
   }
 #line 1742 "parser.cpp"
     break;
 
   case 53:
-#line 215 "./misc/parser.y"
+#line 215 "./misc/parserKopija.y"
   {
     struct argument* lista_argumenata = (yyvsp[0].arg);
     vector<pair<bool,Unija>>* vektor_argumenata = new vector<pair<bool,Unija>>();
@@ -1752,23 +1752,23 @@ yyreduce:
     }
     freeArgument(argumenti_help);
     argumenti_help = nullptr;
-    elementi_help->push_back(new Direktiva(TOKEN_EXTERN, broj_linije,(yyvsp[-1].simbol),vektor_argumenata));
+    (new Direktiva(TOKEN_EXTERN, broj_linije,(yyvsp[-1].simbol),vektor_argumenata))->prolaz();
   }
 #line 1758 "parser.cpp"
     break;
 
   case 54:
-#line 227 "./misc/parser.y"
+#line 227 "./misc/parserKopija.y"
   {
     vector<pair<bool,Unija>>* vektor_argumenata = new vector<pair<bool,Unija>>();
     vektor_argumenata->push_back(make_pair(false, (Unija){.simbol = (yyvsp[0].simbol)}));
-    elementi_help->push_back(new Direktiva(TOKEN_SECTION, broj_linije,(yyvsp[-1].simbol), vektor_argumenata));
+    (new Direktiva(TOKEN_SECTION, broj_linije,(yyvsp[-1].simbol), vektor_argumenata))->prolaz();
   }
 #line 1768 "parser.cpp"
     break;
 
   case 55:
-#line 233 "./misc/parser.y"
+#line 233 "./misc/parserKopija.y"
   {
     struct argument* lista_argumenata = (yyvsp[0].arg);
     vector<pair<bool,Unija>>* vektor_argumenata = new vector<pair<bool,Unija>>();
@@ -1783,41 +1783,41 @@ yyreduce:
     }
     freeArgument(argumenti_help);
     argumenti_help = nullptr;
-    elementi_help->push_back(new Direktiva(TOKEN_WORD, broj_linije, (yyvsp[-1].simbol), vektor_argumenata));
+    (new Direktiva(TOKEN_WORD, broj_linije, (yyvsp[-1].simbol), vektor_argumenata))->prolaz();
   }
 #line 1789 "parser.cpp"
     break;
 
   case 56:
-#line 250 "./misc/parser.y"
+#line 250 "./misc/parserKopija.y"
   {
     vector<pair<bool,Unija>>* vektor_argumenata = new vector<pair<bool,Unija>>();
     vektor_argumenata->push_back(make_pair(true,(Unija){.broj = (yyvsp[0].broj)}));
-    elementi_help->push_back(new Direktiva(TOKEN_SKIP, broj_linije, (yyvsp[-1].simbol), vektor_argumenata));
+    (new Direktiva(TOKEN_SKIP, broj_linije, (yyvsp[-1].simbol), vektor_argumenata))->prolaz();
   }
 #line 1799 "parser.cpp"
     break;
 
   case 57:
-#line 256 "./misc/parser.y"
+#line 256 "./misc/parserKopija.y"
   {
     vector<pair<bool,Unija>>* vektor_argumenata = new vector<pair<bool,Unija>>();
     vektor_argumenata->push_back(make_pair(false, (Unija){.simbol = (yyvsp[0].simbol)}));
-    elementi_help->push_back(new Direktiva(TOKEN_ASCII, broj_linije, (yyvsp[-1].simbol), vektor_argumenata));
+    (new Direktiva(TOKEN_ASCII, broj_linije, (yyvsp[-1].simbol), vektor_argumenata))->prolaz();
   }
 #line 1809 "parser.cpp"
     break;
 
   case 58:
-#line 262 "./misc/parser.y"
+#line 262 "./misc/parserKopija.y"
   {
-    elementi_help->push_back(new Direktiva(TOKEN_END, broj_linije, (yyvsp[0].simbol)));
+    (new Direktiva(TOKEN_END, broj_linije, (yyvsp[0].simbol)))->prolaz();
   }
 #line 1817 "parser.cpp"
     break;
 
   case 59:
-#line 270 "./misc/parser.y"
+#line 270 "./misc/parserKopija.y"
   {
     if(!argumenti_help){
       argumenti_help = napraviArgument((yyvsp[0].broj), nullptr);
@@ -1832,7 +1832,7 @@ yyreduce:
     break;
 
   case 60:
-#line 281 "./misc/parser.y"
+#line 281 "./misc/parserKopija.y"
   {
     if(!argumenti_help){
       argumenti_help = napraviArgument(-1, (yyvsp[0].simbol));
@@ -1847,7 +1847,7 @@ yyreduce:
     break;
 
   case 61:
-#line 292 "./misc/parser.y"
+#line 292 "./misc/parserKopija.y"
   {
     if(!argumenti_help){
       argumenti_help = napraviArgument((yyvsp[0].broj), nullptr);
@@ -1861,7 +1861,7 @@ yyreduce:
     break;
 
   case 62:
-#line 302 "./misc/parser.y"
+#line 302 "./misc/parserKopija.y"
   {
     if(!argumenti_help){
       argumenti_help = napraviArgument(-1, (yyvsp[0].simbol));
@@ -1875,7 +1875,7 @@ yyreduce:
     break;
 
   case 63:
-#line 315 "./misc/parser.y"
+#line 315 "./misc/parserKopija.y"
   {
     if(!argumenti_help){
       argumenti_help = napraviArgument(-1,(yyvsp[0].simbol));
@@ -1890,7 +1890,7 @@ yyreduce:
     break;
 
   case 64:
-#line 326 "./misc/parser.y"
+#line 326 "./misc/parserKopija.y"
   {
     if(!argumenti_help){
       argumenti_help = napraviArgument(-1,(yyvsp[0].simbol));
@@ -2136,4 +2136,4 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 336 "./misc/parser.y"
+#line 336 "./misc/parserKopija.y"
