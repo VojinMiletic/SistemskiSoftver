@@ -122,14 +122,8 @@ class Asembler{
   int redniBrojSekcije = 0;
   int LC;
   string trenutnaSekcija;
-
-  map<int, string> greske; // kljuc je broj linije
-  
+ 
   Asembler();
-
-  
-
-  
 
   bool obradiInstrukciju(yytokentype token, int brLinije, char* mnemonik, Operand* operand, int gpr1, int gpr2, int csr);
   
@@ -155,6 +149,7 @@ class Asembler{
   ofstream fajl;
   const char* imeIzlaznogFajla;
   const char* imeUlaznogFajla;
+  FILE* ulazniFajl;
   
 
 public:

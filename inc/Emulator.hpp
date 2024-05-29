@@ -1,9 +1,8 @@
 #include <iostream>
 using namespace std;
 #include <string>
-#include <map>
-#include <algorithm>
 #include <vector>
+#include <algorithm>
 #include <fstream>
 #include <sstream>
 #include <iomanip>
@@ -88,7 +87,6 @@ class Emulator{
 
 
   void procitajUlaz();
-  void ispisiUlaz();
 
   void mapirajMemoriju();
   void ispisiMapiranuMemoriju();

@@ -11,9 +11,8 @@ struct argument{
   struct argument* next;
 };
 
-extern vector<Leksicki_Element*>* elementi_help;
 extern struct argument* argumenti_help;
-//extern FILE* ulazniFajl;
+
 
 struct argument* napraviArgument(int, char*);
 
